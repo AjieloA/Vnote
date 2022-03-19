@@ -803,3 +803,63 @@ class Program
     }
 }
 ```
+***
+***
+***
+## 2022.03.19
+### 泛型：List<数据类型>
+概念：泛型的特点就是类型的安全，规定了在集合中所存储的数据类型；
+语法：
+```
+using System.Collections.Generic;
+
+List<数据类型> list = new List<数据类型>();
+list.Add(1);//添加数据；
+//泛型的遍历1；
+foreach(int i in list)
+{
+    Console.WriteLine("输出的数据："+i);
+}
+//泛型的遍历2；
+for(int i=0;i<list.Count;i++)
+{
+    Console.WriteLine("泛型的索引{0}，泛型的值{1}",i,list[i]);
+}
+```
+### 字典：Dictionary<键的数据类型，值的数据类型>
+概念：键值对存储，可以使用泛型；
+语法：
+```
+using System.Collection;
+Dictionary<键的数据类型，值的数据类型> dic = new Dictionary<键的数据类型，值的数据类型>();
+dic.Add(1,1);
+//遍历字典数据方法1；
+var skeys = dic.Keys;
+foreach(string i in skeys)
+{
+    Console.WriteLine("键：{0}，值“{1}",i,dic[i]);
+}
+//遍历字典数据方法2：遍历器；
+var i = dic.GetEnumerator();
+while (i.Move.Next())
+{
+    Console.WriteLine("键：{0}，值：{1}",i.Current.Key,I.Current.value);
+}
+```
+### 异常处理
+概念：异常指在程序 运行中出现的问题，而非编译时出现的问题；
+语法：
+```
+try
+{
+    语句块；
+}
+catch(Exception ex)
+{
+    Console.WriteLine("异常原因："+ex.Message);
+}
+finally//finally 表示是否发生异常都会执行的代码；
+{
+    语句块；
+}
+```
