@@ -863,3 +863,93 @@ finally//finally 表示是否发生异常都会执行的代码；
     语句块；
 }
 ```
+***
+***
+***
+## 2022.03.20
+### 数据流：System.IO;
+#### 创建删除文件：File；
+语法：
+```
+using System.IO;
+string strFilePath = "I:\\test.txt";
+File.Create(strFilePath);//创建文件；
+File.Delete(strFilePath);//删除文件；
+```
+#### 创建删除文件夹：Directory;
+语法：
+```
+using System.IO;
+string strDirPath = "I:\\Test";
+Directory.CreateDirectory(strDirPath);//创建文件夹；
+Directory.Delete(strDirPath);//删除文件夹;
+```
+#### 写入读取数据：FileStream,StreamWriter,StreaReader;
+语法：
+```
+using System.IO;
+string strPath = "I:\\test.txt";
+FileStream fstream = new FileStream(strPath,FileMode.OpenOrCreate);//路径下如果有文件就直接打开文件，没有则创建；
+StreamWriter swriter = new StreamWriter(strPath);
+swriter.Write("写入数据");
+swriter.Close();//关闭流的方法；
+fstream.Close();
+swriter.Dispose();//流的资源释放；
+fstream.Dispose();
+StreamReader reader = new StreamReader(strPath);
+string strRead = reader.ReadToEnd();//从文件中读取数据；
+reader.Close();
+reader.DisPose();
+```
+#### 通过字节转码方式写入读取
+ 语法：
+```
+//通过字节转码将数据写到文件中；
+FileStream fstream = new FileStream("I:\\Program.cs",FileMode.OpenOrCreate);
+string strGet = Console.ReadLine();
+//需要吧字符串数据进行转码，转成字节数据；
+Byte[] getBytes = System.Text.Encoding.UTF8.GetBytes(strGet);
+//需要把字节数据流写入到文件流中；
+fstream.Write(getBytes,0,getBytes.Length);
+fstream.Flush();//清除缓冲区的内容；
+fstream.Close();
+fstream.Dispose();
+// 通过字节转码读取文件；
+FileStream fstream = new FileStream("I:\\Program.cs",FileMode.OpenOrCreate);
+//构建字节码；
+Byte[] bytes = new Byte[fesream.Length];
+//把流的数据读取到字节码；
+fstream.Read(bytes,0,(int)fstream.Length);
+//字节码转换成字符串；
+string strGetData = System.Text.Encoding.UTF8.GetString(bytes);
+fstream.Close();
+fstream.Dispose();
+```
+### 委托：delegate；
+概念：委托和类一样，是一种用户自定义的类型。但类表示的是数据和方法的集合，而委托则持有一个或多个方法，以及一系列预定义操作；
+语法：
+```
+delegate double DelOperator(double num1,double num2);
+class Program
+{
+    static void Main(string[] args)
+    {
+        //在实例化委托的时候，会把方法名作为一个参数传入；
+        DelOperator delop = new DelOperator(Add)；//指向Add这个方法；
+        delop += new DelOperator(Div);//委托指向Div方法；
+        delop -= new DelOperator(Div);//委托取消指向Div方法；
+        //委托调用方法1；
+        double reslut = delop.Invoke(3,5);
+        //委托调用方法2；
+        double result = delop(3,5);
+    }
+    static double Add(double a,double b)
+    {
+        return a+b;
+    }
+    static double Dic(double a,double b)
+    {
+        return a-b;
+    }
+}
+```
