@@ -903,7 +903,7 @@ reader.DisPose();
 ```
 #### 通过字节转码方式写入读取
  语法：
-```
+``` 
 //通过字节转码将数据写到文件中；
 FileStream fstream = new FileStream("I:\\Program.cs",FileMode.OpenOrCreate);
 string strGet = Console.ReadLine();
@@ -953,3 +953,23 @@ class Program
     }
 }
 ```
+***
+***
+***
+## 2022.03.21
+### 线程：Thread
+语法：
+```
+using System.Threading;
+Thread t1 = new Thread(new ThreadStart(Test1));//ThreadStart()是不带参数的线程；
+Thread t2 = new Thread(new ParameterizedThreadStart(Test2));//ParameterizedThreadStart()是带参数的线程；
+t1.Name = "线程1";//给线程命名；
+t1.Start();//执行线程；
+static void Test1()
+{
+    代码块；
+    Thread.Sleep(2000);//线程休眠2秒；
+    Thread.CurrentThread.Join(2000);//线程阻塞2秒，线程阻塞时不会影响其它线程执行； 
+}
+```
+ 
