@@ -86,3 +86,77 @@
                 * Reference Resolution X>480 Y>270
                 * Crop Frame X✔ Y✔
                     * Stretch Fill ✔
+***
+***
+***
+## 2022.04.02
+### 角色构建
+* >Player
+    * Rigidbody 2D
+        * Collision Detection>Continuous
+        * Interpolate>Interpolate
+        * Constraints
+            * Freeze Rotation ✔Z
+    * Sorting Group
+        * Sorting Layer>Instances
+    * >Body
+        * Sprite Renderer>customised_farmer_0
+        * Sorting Layer[Instances]>1
+    * >Hair
+        * Sprite Renderer>customised_hair_0
+        * Sorting Layer[Instances]>2
+    * >Hat
+        * Sprite Renderer>Transparent16X16
+        * Sorting Layer[Instances]>3
+    * >Ams
+        * Sprite Renderer>customised_farmer_6
+        * Sorting Layer[Instances]>4
+    * >Emquippedltem
+        * Sprite Renderer>Transparent16X16
+        * Sorting Layer[Instances]>5
+    * >Tool
+        * Sprite Renderer>Transparent16X16
+        * Sorting Layer[Instances]>6
+    * >ToolEffect
+        * Sprite Renderer>Transparent16X16
+        * Sorting Layer[Instances]>7
+### 脚本创建
+* SingletonMonobehaviour
+    * abstract>抽象类，被继承后可以使用virtual关键字被重写；
+    * SingletonMonobehaviour<T> >泛型；
+    * MonoBehaviour where T:MonoBehaviour >泛型约束，使用泛型指定类型时，有一定的规则；
+```
+public abstract class SingletonMonobehaviour<T> : MonoBehaviour where T:MonoBehaviour
+{
+   //单例
+   private static T instance;
+   //通过Instance间接访问instance，只提供get方法，保证了instance的安全性；
+   public static T Instance
+   {
+       get
+       {
+           return instance;
+       }
+   }
+   //保证单例的唯一性；
+   protected virtual void Awake()
+   {
+       if(instance==null)
+       {
+           instance = this as T;
+       }
+       else
+       {
+           Destroy(gameObject);
+       }  
+   }
+}
+```
+* Player
+```
+public class Player : SingletonMonobehaviour<Player>
+{
+}
+```
+
+
