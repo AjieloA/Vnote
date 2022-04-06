@@ -140,7 +140,7 @@ public abstract class SingletonMonobehaviour<T> : MonoBehaviour where T:MonoBeha
    }
    //保证单例的唯一性；
    protected virtual void Awake()
-   {
+   {    
        if(instance==null)
        {
            instance = this as T;
@@ -158,5 +158,241 @@ public class Player : SingletonMonobehaviour<Player>
 {
 }
 ```
+***
+***
+***
+## 2022.04.06
+### 角色动画创建
+* 解除预制体;
+* 给除Emquippedltem的所有子物体添加Animator并添加对应的Animation;
+* 创建脚本
+    * Scripts>Animation>MovementAnimationParameterControl
+```
+public class MovementAnimationParameterControl:MonoBehaviour
+{
+    private void AnimationEventPlayFootstepSound() 
+    {
+        
+    }
+}
+```
+###  创建枚举与委托事件
+* 枚举：
+    * Scripts>Enums>Enums
+```
+public enum ToolEffct
+{
+    none,
+    watering
+}
+```
+* 委托事件：
+    * Scripts>Events>EventHandler
+```
+public delegate void MovementDelegate(float inputX,float inputY,bool isWalking,bool isRunning,bool isIdle,bool isCarrying,ToolEffect toolEffect,
+bool isUsingToolRight,bool isUsingToolLeft,bool isUsingToolUp,bool isUsingToolDown,
+bool isLiftingToolRight,bool isLiftingToolLeft,bool isLiftingToolUp,bool isLiftingToolDown,
+bool isPickingRight,bool isPickingLeft,bool isPickingUp,bool isPickingDown,
+bool idleUp,bool idledown,bool idleLeft,bool idleRight);
+pubulic static class EventHandler
+{
+    //Movemwnt Event
+    Pubulic static event MovementDelegate MovementEvent;
+    //Movement Event Call for Publishers
+    pubulic static Void CallMovementEvent(float inputX,float inputY,bool isWalking,bool isRunning,bool isIdle,bool isCarrying,ToolEffect toolEffect,bool isUsingToolRight,bool isUsingToolLeft,bool isUsingToolUp,bool isUsingToolDown,bool isLiftingToolRight,bool isLiftingToolLeft,bool isLiftingToolUp,bool isLiftingToolDown,bool isPickingRight,bool isPickingLeft,bool isPickingUp,bool isPickingDown,bool idleUp,bool idledown,bool idleLeft,bool idleRight) 
+    {
+        if(MovementEvent != null)
+        {
+            MovementEvent(float inputX,float inputY,bool isWalking,bool isRunning,bool isIdle,bool isCarrying,ToolEffect toolEffect,bool isUsingToolRight,bool isUsingToolLeft,bool isUsingToolUp,bool isUsingToolDown,bool isLiftingToolRight,bool isLiftingToolLeft,bool isLiftingToolUp,bool isLiftingToolDown,bool isPickingRight,bool isPickingLeft,bool isPickingUp,bool isPickingDown,bool idleUp,bool idledown,bool idleLeft,bool idleRight);
+        }
+    }
+}
+```
+### 调用角色动画
+* 创建公共静态类
+    * Scripits>Misc>Settings
+```
+using UniyuEngine
+pubilic static class settings
+{
+    //Player Animation Parameters;
+    pubulic static int xInput;
+    pubulic static int yInput;
+    pubulic static int isWalking;
+    pubulic static int isRunning;
+    pubulic static int toolEffect;
+    pubulic static int isUsingToolRight;
+    pubulic static int isUsingToolLeft;
+    pubulic static int isUsingToolUp;
+    pubulic static int isUsingToolDown;
+    pubulic static int isLiftingToolUp;
+    pubulic static int isLiftingToolDown;
+    pubulic static int isPickingRight;
+    pubulic static int isPickingLeft;
+    pubulic static int isPickingUp;
+    pubulic static int isPickingDown;
+    
+    //Shared Animation Parameters;
+    pubulic static int idleUp;
+    pubulic static int idleDown;
+    pubulic static int idleLeft;
+    pubulic static int idleRight;
+    
+    //static constructor;
+    static Settings()
+    {
+        //Player Animation Parameters;
+        xInput=Animator.StringToHash("xInput");
+        yInput=Animator.StringToHash("yInput");
+        isWalking=Animator.StringToHash("isWalking");
+        isRunning=Animator.StringToHash("isRunning");
+        toolEffect=Animator.StringToHash("toolEffect");
+        isUsingToolRight=Animator.StringToHash("isUsingToolRight");
+        isUsingToolLeft=Animator.StringToHash("isUsingToolLeft");
+        isUsingToolUp=Animator.StringToHash("isUsingToolUp");
+        isUsingToolDown=Animator.StringToHash("isUsingToolDown");
+        isLiftingToolRight=Animator.StringToHash("isLiftingToolRight");
+        isLiftingToolLeft=Animator.StringToHash("isLiftingToolLeft");
+        isLiftingToolUp=Animator.StringToHash("isLiftingToolUp");
+        isLiftingToolDown=Animator.StringToHash("isLiftingToolDown");
+        isSwingToolRight=Animator.StringToHash("isSwingToolRight");
+        isSwingToolLeft=Animator.StringToHash("isSwingToolLeft");
+        isSwingToolUp=Animator.StringToHash("isSwingToolUp");
+        isSwingToolDown=Animator.StringToHash("isSwingToolDown");
+        isPickingToolRight=Animator.StringToHash("isPickingToolRight");
+        isPickingToolLeft=Animator.StringToHash("isPickingToolLeft");
+        isPickingToolUp=Animator.StringToHash("isPickingToolUp");
+        isPickingToolDown=Animator.StringToHash("isPickingToolDown");
+        
+       //Shared Animation Parameters;
+        idleUp=Animator.StringToHash("idleUp");
+        idleDown=Animator.StringToHash("idleDown");
+        idleLeft=Animator.StringToHash("idleLeft");
+        idleRight=Animator.StringToHash("idleRight");
+        
+    }
+}
+```
+* 在MovementAnimationParameterControl中调用
+```
+using UnityEngine;
+public class MovementAnimationParameterControl:MonoBehaviour
+{
+    private Animator animator;
+    
+    //Use this for initialistion;
+    private void Awake()
+    {
+        animator=GetComponent<Animator>();   
+    }
+    private void OnEnable()
+    {
+        EvetHandler.MovementEvent += SetAnimationParameters;
+    }
+    private void OnDIsable()
+    {
+        EnventHandler.MovementEvent -=SetAnimationParameters;
+    }
+    private void SetAnimationParameters(float inputX,float inputY,bool isWalking,bool isRunning,bool isIdle,bool isCarrying,ToolEffect toolEffect,bool isUsingToolRight,bool isUsingToolLeft,bool isUsingToolUp,bool isUsingToolDown,bool isLiftingToolRight,bool isLiftingToolLeft,bool isLiftingToolUp,bool isLiftingToolDown,bool isPickingRight,bool isPickingLeft,bool isPickingUp,bool isPickingDown,bool idleUp,bool idledown,bool idleLeft,bool idleRight)
+    {
+        animator.SetFloat(Settings.xInput,xInput);
+        animator.SetFloat(Settings.yInput,yInput);
+        animator.SetBool(Settings.isWalking,isWalking);
+        animator.SetBool(Settings.isRunning,isRunning);
+        
+        animator.SetInteger(Settings.toolEffect,(int)toolEffect);
+        
+        if(isUsingToolRight)
+            animator.SetTrigger(settings.isUsingToolRight);
+        if(isUsingToolLeft)
+            animator.SetTrigger(settings.isUsingToolLeft);
+        if(isUsingToolUp)
+            animator.SetTrigger(settings.isUsingToolUp);
+        if(isUsingToolDown)
+            animator.SetTrigger(settings.isUsingToolDown);
+        
+        if(isLiftingToolRight)
+            animator.SetTrigger(settings.isLiftingToolRight);
+        if(isLiftingToolLeft)
+            animator.SetTrigger(settings.isLiftingToolLeft);
+        if(isLiftingToolUp)
+            animator.SetTrigger(settings.isLiftingToolUp);
+        if(isLiftingToolDown)
+            animator.SetTrigger(settings.isLiftingToolDown);
+            
+        if(isSwingToolRight)
+            animator.SetTrigger(settings.isSwingToolRight);
+        if(isSwingToolLeft)
+            animator.SetTrigger(settings.isSwingToolLeft);
+        if(isSwingToolUp)
+            animator.SetTrigger(settings.isSwingToolUp);
+        if(isSwingToolDown)
+            animator.SetTrigger(settings.isSwingToolDown);
+            
+        if(isPickingToolRight)
+            animator.SetTrigger(settings.isPickingToolRight);
+        if(isPickingToolLeft)
+            animator.SetTrigger(settings.isPickingToolLeft);
+        if(isPickingToolUp)
+            animator.SetTrigger(settings.isPickingToolUp);
+        if(isPickingToolDown)
+            animator.SetTrigger(settings.isPickingToolDown);
+            
+        if(idleUp)
+            animator.SetTrigger(settings.idleUp);
+        if(idleDown)
+            animator.SetTrigger(settings.idleDown);
+        if(idleRight)
+            animator.SetTrigger(settings.idleRight);
+        if(idleLeft)
+            animator.SetTrigger(settings.idleLeft);
+    }
+    private void AnimationEventPlayFootstepSound() 
+    {
+        
+    }
+}
+```
+* 创建动画测试脚本
+    * ScriptS>Player>PlayerAnimationTest
+```
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
+pubulic class PlayerAnimationTest:MonoBehaviour
+{
+    pubulic float inputx;
+    pubulic float inputy;
+    pubulic bool isWalking;
+    pubulic bool isRuning;
+    pubulic bool isIdle;
+    pubulic bool isCarrying;
+    pubulic ToolEffect toolEffect;
+    pubulic bool isUsingToolRight;
+    pubulic bool isUsingToolLeft;
+    pubulic bool isUsingToolUp;
+    pubulic bool isUsingToolDown;
+    pubulic bool isLiftingToolRight;
+    pubulic bool isLiftingToolLeft;
+    pubulic bool isLiftingToolUp;
+    pubulic bool isLiftingToolDown;
+    pubulic bool isPickToolRight;
+    pubulic bool isPickToolLeft;
+    pubulic bool isPickToolUp;
+    pubulic bool isPickToolDown;
+    pubulic bool isSwingToolRight;
+    pubulic bool isSwingToolLeft;
+    pubulic bool isSwingToolUp;
+    pubulic bool isSwingToolDown;
+    pubulic bool idleUp;
+    pubulic bool idleDown;
+    pubulic bool idleLeft;
+    pubulic bool idleRight;
+}
 
+    private void Update()
+    {
+        EventHandler.CallMovemwntEvent(float inputX,float inputY,bool isWalking,bool isRunning,bool isIdle,bool isCarrying,ToolEffect toolEffect,bool isUsingToolRight,bool isUsingToolLeft,bool isUsingToolUp,bool isUsingToolDown,bool isLiftingToolRight,bool isLiftingToolLeft,bool isLiftingToolUp,bool isLiftingToolDown,bool isPickingRight,bool isPickingLeft,bool isPickingUp,bool isPickingDown,bool idleUp,bool idledown,bool idleLeft,bool idleRight)
+    }
+```
